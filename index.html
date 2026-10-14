@@ -58,10 +58,9 @@
 
     <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
         
-        <!-- Sidebar / Profile -->
         <aside class="md:col-span-1">
             <div class="bg-autumn-paper rounded-2xl shadow-2xl overflow-hidden sticky top-8 border border-autumn-lines">
-                <!-- Header with Autumn colors touch -->
+                <!-- Header with Autumn gradient -->
                 <div class="h-24 bg-gradient-to-r from-yellow-800 via-orange-700 to-red-900 opacity-90"></div>
                 
                 <div class="px-6 py-8 flex flex-col items-center text-center -mt-16 relative z-10">
@@ -77,13 +76,38 @@
                         <span class="px-3 py-1 bg-amber-900/50 text-amber-200 border border-amber-800 rounded-full text-xs font-semibold flex items-center gap-1"><i class="fa-solid fa-music"></i> Músico</span>
                         <span class="px-3 py-1 bg-red-900/50 text-red-200 border border-red-800 rounded-full text-xs font-semibold flex items-center gap-1"><i class="fa-solid fa-flag"></i> Chileno</span>
                         <span class="px-3 py-1 bg-stone-800 text-stone-300 border border-stone-600 rounded-full text-xs font-semibold flex items-center gap-1"><i class="fa-solid fa-glasses"></i> Con Lentes</span>
-                        <span class="px-3 py-1 bg-orange-900/50 text-orange-200 border border-orange-800 rounded-full text-xs font-semibold flex items-center gap-1"><i class="fa-solid fa-lightbulb"></i> Genio (Inteligente)</span>
+                        <span class="px-3 py-1 bg-orange-900/50 text-orange-200 border border-orange-800 rounded-full text-xs font-semibold flex items-center gap-1"><i class="fa-solid fa-lightbulb"></i> Genio</span>
                     </div>
 
                     <p class="text-autumn-muted text-sm italic mb-4 font-handwriting text-lg">
                         "¡Wena wena! Soy el Tío Matías. Con mis lentes veo el mundo distinto y con mi música le pongo ritmo. Paso a dejar registro de mis genialidades y locuras."
                     </p>
                     
+                    <!-- Cloud Health Indicator -->
+                    <div id="cloud-status" class="w-full bg-autumn-bg/80 px-3 py-2 rounded-xl border border-autumn-lines text-xs flex items-center justify-center gap-2 mb-4 text-autumn-muted">
+                        <span class="relative flex h-2.5 w-2.5">
+                          <span id="cloud-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                          <span id="cloud-dot" class="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
+                        </span>
+                        <span id="cloud-text">Conectando a la nube...</span>
+                    </div>
+
+                    <!-- Auth status / Login Button -->
+                    <div class="w-full">
+                        <div id="logged-out-view" class="space-y-2">
+                            <span class="block text-xs text-autumn-muted"><i class="fa-solid fa-eye mr-1"></i> Modo Lectura (Público)</span>
+                            <button id="btn-open-login" class="w-full bg-orange-800/80 hover:bg-orange-700 text-autumn-text py-2 px-4 rounded-xl border border-orange-600/50 font-semibold text-sm transition-all flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-key"></i> Soy el Tío Matías (Iniciar Sesión)
+                            </button>
+                        </div>
+                        <div id="logged-in-view" class="hidden space-y-2">
+                            <span class="block text-xs text-emerald-400 font-semibold"><i class="fa-solid fa-user-check mr-1"></i> ¡Hola Tío Matías! (Modo Autor)</span>
+                            <button id="btn-logout" class="w-full bg-red-950/80 hover:bg-red-900 text-red-200 py-2 px-4 rounded-xl border border-red-800 font-semibold text-sm transition-all flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+                            </button>
+                        </div>
+                    </div>
+
                     <div class="w-full h-px bg-autumn-lines my-4"></div>
                     
                     <div class="text-sm text-autumn-muted">
@@ -93,38 +117,55 @@
             </div>
         </aside>
 
-        <!-- Main Content Area -->
         <main class="md:col-span-2 flex flex-col gap-8">
             
-            <!-- Editor Section -->
-            <section class="bg-autumn-paper rounded-2xl shadow-2xl p-6 md:p-8 border-t-8 border-orange-700 border-x border-b border-autumn-lines">
-                <h2 class="text-2xl font-bold font-handwriting text-autumn-text mb-6 flex items-center gap-3">
-                    <i class="fa-solid fa-pen-nib text-orange-500"></i> Escribir nueva página
-                </h2>
+            <!-- Editor Section (Locked / Unlocked based on login state) -->
+            <section id="editor-section" class="bg-autumn-paper rounded-2xl shadow-2xl p-6 md:p-8 border-t-8 border-orange-700 border-x border-b border-autumn-lines">
                 
-                <form id="diary-form" class="space-y-4">
-                    <div>
-                        <label for="entry-title" class="sr-only">Título</label>
-                        <input type="text" id="entry-title" required placeholder="Título de hoy (ej. El día que descubrí un nuevo acorde...)" 
-                            class="w-full text-xl font-semibold border-0 border-b-2 border-autumn-lines focus:ring-0 focus:border-orange-500 px-2 py-3 bg-transparent transition-colors text-autumn-text placeholder-autumn-muted">
-                    </div>
+                <!-- Unlocked Editor Form (visible only when logged in) -->
+                <div id="unlocked-editor" class="hidden">
+                    <h2 class="text-2xl font-bold font-handwriting text-autumn-text mb-6 flex items-center gap-3">
+                        <i class="fa-solid fa-pen-nib text-orange-500"></i> Escribir nueva página
+                    </h2>
                     
-                    <div class="relative">
-                        <label for="entry-content" class="sr-only">Contenido</label>
-                        <textarea id="entry-content" required rows="6" placeholder="Querido diario... (¡Ponele color, Tío Matías!)" 
-                            class="w-full paper-lines border-0 focus:ring-0 resize-y text-autumn-text text-lg bg-transparent font-handwriting"></textarea>
+                    <form id="diary-form" class="space-y-4">
+                        <div>
+                            <label for="entry-title" class="sr-only">Título</label>
+                            <input type="text" id="entry-title" required placeholder="Título de hoy (ej. El día que descubrí un nuevo acorde...)" 
+                                class="w-full text-xl font-semibold border-0 border-b-2 border-autumn-lines focus:ring-0 focus:border-orange-500 px-2 py-3 bg-transparent transition-colors text-autumn-text placeholder-autumn-muted">
+                        </div>
+                        
+                        <div class="relative">
+                            <label for="entry-content" class="sr-only">Contenido</label>
+                            <textarea id="entry-content" required rows="6" placeholder="Querido diario... (¡Ponele color, Tío Matías!)" 
+                                class="w-full paper-lines border-0 focus:ring-0 resize-y text-autumn-text text-lg bg-transparent font-handwriting"></textarea>
+                        </div>
+                        
+                        <div class="flex justify-end pt-4">
+                            <button type="submit" 
+                                class="bg-orange-700 hover:bg-orange-600 text-autumn-text font-bold py-3 px-6 rounded-xl shadow-lg transition-colors flex items-center gap-2 transform active:scale-95">
+                                <i class="fa-solid fa-leaf"></i> Guardar Historia en la Nube
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Locked Editor Banner (visible when viewing as visitor) -->
+                <div id="locked-editor" class="text-center py-6">
+                    <div class="w-16 h-16 bg-autumn-bg rounded-full flex items-center justify-center mx-auto mb-4 border border-autumn-lines text-orange-500 text-2xl">
+                        <i class="fa-solid fa-lock"></i>
                     </div>
-                    
-                    <div class="flex justify-end pt-4">
-                        <button type="submit" 
-                            class="bg-orange-700 hover:bg-orange-600 text-autumn-text font-bold py-3 px-6 rounded-xl shadow-lg transition-colors flex items-center gap-2 transform active:scale-95">
-                            <i class="fa-solid fa-leaf"></i> Guardar Historia
-                        </button>
-                    </div>
-                </form>
+                    <h3 class="text-xl font-bold text-autumn-text mb-2 font-handwriting">Diario del Tío Matías - Modo Lectura</h3>
+                    <p class="text-autumn-muted max-w-md mx-auto text-sm mb-4">
+                        Esta sección está reservada exclusivamente para que el <strong>Tío Matías</strong> escriba sus historias. Si eres tú, inicia sesión para publicar.
+                    </p>
+                    <button id="btn-open-login-2" class="bg-orange-800 hover:bg-orange-700 text-autumn-text font-semibold px-5 py-2.5 rounded-xl border border-orange-600 transition-all text-sm inline-flex items-center gap-2">
+                        <i class="fa-solid fa-key"></i> Iniciar Sesión para Escribir
+                    </button>
+                </div>
+
             </section>
 
-            <!-- Entries Section -->
             <section>
                 <div class="flex items-center justify-between mb-6">
                     <h3 class="text-xl font-bold text-autumn-text"><i class="fa-solid fa-book-open text-orange-600 mr-2"></i> Mis Historias</h3>
@@ -135,75 +176,7 @@
                     <!-- Empty State -->
                     <div id="empty-state" class="bg-autumn-paper rounded-xl p-8 text-center shadow-md border border-autumn-lines">
                         <i class="fa-solid fa-guitar text-4xl text-autumn-lines mb-4"></i>
-                        <p class="text-autumn-muted font-handwriting text-xl">El diario está en blanco. ¡Afina esa guitarra y escribe tu primera aventura de otoño!</p>
-                    </div>
-                    
-                    <h1 class="text-2xl font-bold font-handwriting text-gray-900 mb-2">El Tío Matías</h1>
-                    
-                    <!-- Badges -->
-                    <div class="flex flex-wrap justify-center gap-2 mb-4">
-                        <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-semibold flex items-center gap-1"><i class="fa-solid fa-music"></i> Músico</span>
-                        <span class="px-3 py-1 bg-red-100 text-red-800 rounded-full text-xs font-semibold flex items-center gap-1"><i class="fa-solid fa-flag"></i> Chileno</span>
-                        <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-semibold flex items-center gap-1"><i class="fa-solid fa-glasses"></i> Con Lentes</span>
-                        <span class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-semibold flex items-center gap-1"><i class="fa-solid fa-lightbulb"></i> Genio (Inteligente)</span>
-                    </div>
-
-                    <p class="text-gray-600 text-sm italic mb-4 font-handwriting text-lg">
-                        "¡Wena wena! Soy el Tío Matías. Con mis lentes veo el mundo distinto y con mi música le pongo ritmo. Paso a dejar registro de mis genialidades y locuras."
-                    </p>
-                    
-                    <div class="w-full h-px bg-gray-200 my-4"></div>
-                    
-                    <div class="text-sm text-gray-500">
-                        <p><i class="fa-regular fa-calendar-days mr-2"></i> Hoy es: <span id="current-date" class="font-semibold"></span></p>
-                    </div>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Main Content Area -->
-        <main class="md:col-span-2 flex flex-col gap-8">
-            
-            <!-- Editor Section -->
-            <section class="bg-diary-paper rounded-2xl shadow-xl p-6 md:p-8 border-t-8 border-chile-red">
-                <h2 class="text-2xl font-bold font-handwriting text-gray-800 mb-6 flex items-center gap-3">
-                    <i class="fa-solid fa-pen-nib text-chile-blue"></i> Escribir nueva página
-                </h2>
-                
-                <form id="diary-form" class="space-y-4">
-                    <div>
-                        <label for="entry-title" class="sr-only">Título</label>
-                        <input type="text" id="entry-title" required placeholder="Título de hoy (ej. El día que descubrí un nuevo acorde...)" 
-                            class="w-full text-xl font-semibold border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-chile-blue px-2 py-3 bg-transparent transition-colors placeholder-gray-400">
-                    </div>
-                    
-                    <div class="relative">
-                        <label for="entry-content" class="sr-only">Contenido</label>
-                        <textarea id="entry-content" required rows="6" placeholder="Querido diario... (¡Ponele color, Tío Matías!)" 
-                            class="w-full paper-lines border-0 focus:ring-0 resize-y text-gray-700 text-lg bg-transparent font-handwriting"></textarea>
-                    </div>
-                    
-                    <div class="flex justify-end pt-4">
-                        <button type="submit" 
-                            class="bg-chile-blue hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2 transform active:scale-95">
-                            <i class="fa-solid fa-floppy-disk"></i> Guardar Historia
-                        </button>
-                    </div>
-                </form>
-            </section>
-
-            <!-- Entries Section -->
-            <section>
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xl font-bold text-gray-700"><i class="fa-solid fa-book-open text-gray-500 mr-2"></i> Mis Historias</h3>
-                    <span id="entries-count" class="text-sm font-semibold bg-gray-200 text-gray-700 py-1 px-3 rounded-full">0 entradas</span>
-                </div>
-                
-                <div id="entries-container" class="space-y-6">
-                    <!-- Empty State -->
-                    <div id="empty-state" class="bg-white rounded-xl p-8 text-center shadow-sm border border-gray-100">
-                        <i class="fa-solid fa-guitar text-4xl text-gray-300 mb-4"></i>
-                        <p class="text-gray-500 font-handwriting text-xl">El diario está en blanco. ¡Afina esa guitarra y escribe tu primera aventura!</p>
+                        <p class="text-autumn-muted font-handwriting text-xl">El diario está en blanco. ¡Inicia sesión y escribe tu primera aventura!</p>
                     </div>
                     <!-- Entries will be dynamically inserted here -->
                 </div>
@@ -212,11 +185,51 @@
         </main>
     </div>
 
+    <div id="login-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-autumn-paper border border-autumn-lines rounded-2xl shadow-2xl max-w-md w-full p-6 md:p-8 relative">
+            <button id="btn-close-modal" class="absolute top-4 right-4 text-autumn-muted hover:text-autumn-text text-xl p-2">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            
+            <div class="text-center mb-6">
+                <div class="w-14 h-14 bg-orange-950/80 rounded-full flex items-center justify-center mx-auto mb-3 border border-orange-700 text-orange-500 text-2xl">
+                    <i class="fa-solid fa-user-shield"></i>
+                </div>
+                <h3 class="text-2xl font-bold font-handwriting text-autumn-text">Acceso Tío Matías</h3>
+                <p class="text-autumn-muted text-xs mt-1">Ingresa tus credenciales para administrar el diario</p>
+            </div>
+
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-autumn-muted mb-1">Usuario</label>
+                    <input type="text" id="login-username" required placeholder="matias30"
+                        class="w-full bg-autumn-bg border border-autumn-lines rounded-xl px-4 py-2.5 text-autumn-text focus:outline-none focus:border-orange-500 text-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-autumn-muted mb-1">Contraseña</label>
+                    <input type="password" id="login-password" required placeholder="••••••••"
+                        class="w-full bg-autumn-bg border border-autumn-lines rounded-xl px-4 py-2.5 text-autumn-text focus:outline-none focus:border-orange-500 text-sm">
+                </div>
+
+                <div id="login-error" class="hidden text-red-400 text-xs bg-red-950/50 border border-red-800 p-3 rounded-xl flex items-center gap-2">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span>Usuario o contraseña incorrectos.</span>
+                </div>
+
+                <button type="submit" class="w-full bg-orange-700 hover:bg-orange-600 text-autumn-text font-bold py-3 px-4 rounded-xl shadow-lg transition-colors flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-right-to-bracket"></i> Entrar al Diario
+                </button>
+            </form>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
+        // Firebase configuration and startup
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
         
@@ -224,13 +237,17 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
         
-        // Guardamos las historias en la zona pública para que todo el curso las vea
+        // Strict Path according to rule
         const entriesCollection = collection(db, 'artifacts', appId, 'public', 'data', 'diary_entries');
 
         let currentUserId = null;
         let entries = [];
         let unsubscribe = null;
+        
+        // Auth state (Tío Matías session)
+        let isMatias = sessionStorage.getItem('matias_authenticated') === 'true';
 
+        // DOM Elements
         const form = document.getElementById('diary-form');
         const titleInput = document.getElementById('entry-title');
         const contentInput = document.getElementById('entry-content');
@@ -238,7 +255,42 @@
         const emptyState = document.getElementById('empty-state');
         const entriesCount = document.getElementById('entries-count');
         const currentDateDisplay = document.getElementById('current-date');
-        const submitBtn = form.querySelector('button[type="submit"]');
+        const submitBtn = form?.querySelector('button[type="submit"]');
+
+        // Cloud status DOM
+        const cloudPing = document.getElementById('cloud-ping');
+        const cloudDot = document.getElementById('cloud-dot');
+        const cloudText = document.getElementById('cloud-text');
+
+        // Login Modal DOM
+        const loginModal = document.getElementById('login-modal');
+        const btnOpenLogin = document.getElementById('btn-open-login');
+        const btnOpenLogin2 = document.getElementById('btn-open-login-2');
+        const btnCloseModal = document.getElementById('btn-close-modal');
+        const loginForm = document.getElementById('login-form');
+        const loginUsername = document.getElementById('login-username');
+        const loginPassword = document.getElementById('login-password');
+        const loginError = document.getElementById('login-error');
+        const loggedOutView = document.getElementById('logged-out-view');
+        const loggedInView = document.getElementById('logged-in-view');
+        const btnLogout = document.getElementById('btn-logout');
+        const unlockedEditor = document.getElementById('unlocked-editor');
+        const lockedEditor = document.getElementById('locked-editor');
+
+        function updateAuthStateUI() {
+            if (isMatias) {
+                loggedOutView.classList.add('hidden');
+                loggedInView.classList.remove('hidden');
+                unlockedEditor.classList.remove('hidden');
+                lockedEditor.classList.add('hidden');
+            } else {
+                loggedOutView.classList.remove('hidden');
+                loggedInView.classList.add('hidden');
+                unlockedEditor.classList.add('hidden');
+                lockedEditor.classList.remove('hidden');
+            }
+            renderEntries();
+        }
 
         const updateSidebarDate = () => {
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
@@ -271,16 +323,15 @@
 
             document.querySelectorAll('.entry-card').forEach(el => el.remove());
 
-            // Ordenamos desde la más nueva a la más antigua
+            // Memory sort newest first
             const sortedEntries = [...entries].sort((a, b) => b.timestamp - a.timestamp);
 
             sortedEntries.forEach(entry => {
-                // El botón de borrar solo se mostrará si fuiste tú quien la escribió
-                const canDelete = entry.authorId === currentUserId;
-                const deleteHTML = canDelete ? `
+                // Delete button only visible when Tío Matías is logged in
+                const deleteHTML = isMatias ? `
                     <footer class="mt-4 pt-4 border-t border-autumn-lines flex justify-end">
                         <button onclick="deleteEntry('${entry.id}')" class="text-red-400 hover:text-red-300 text-sm font-semibold transition-colors flex items-center gap-1">
-                            <i class="fa-solid fa-trash-can"></i> Borrar
+                            <i class="fa-solid fa-trash-can"></i> Borrar Entrada
                         </button>
                     </footer>
                 ` : '';
@@ -307,57 +358,68 @@
         function setupRealtimeListener() {
             if (unsubscribe) unsubscribe();
             
-            // onSnapshot se mantiene sincronizado en tiempo real con la nube
+            // Real-time listener with status feedback
             unsubscribe = onSnapshot(entriesCollection, (snapshot) => {
                 entries = [];
                 snapshot.forEach((doc) => {
                     entries.push({ id: doc.id, ...doc.data() });
                 });
+
+                // Update Cloud indicator: Green and Connected
+                cloudDot.className = "relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500";
+                cloudPing.className = "animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75";
+                cloudText.textContent = "Nube activa y sincronizada";
+                cloudText.className = "text-emerald-400 font-medium";
+
                 renderEntries();
             }, (error) => {
                 console.error("Error cargando historias desde la nube:", error);
+                cloudDot.className = "relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500";
+                cloudPing.className = "hidden";
+                cloudText.textContent = "Error de conexión a la nube";
+                cloudText.className = "text-red-400 font-medium";
             });
         }
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            if (!currentUserId) return;
+        if (form) {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (!currentUserId || !isMatias) return;
 
-            const title = titleInput.value.trim();
-            const content = contentInput.value.trim();
-            if (!title || !content) return;
+                const title = titleInput.value.trim();
+                const content = contentInput.value.trim();
+                if (!title || !content) return;
 
-            const now = new Date();
-            const newEntry = {
-                timestamp: now.getTime(),
-                title: title,
-                content: content,
-                date: formatDate(now),
-                time: formatTime(now),
-                authorId: currentUserId
-            };
-            
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando en la nube...';
+                const now = new Date();
+                const newEntry = {
+                    timestamp: now.getTime(),
+                    title: title,
+                    content: content,
+                    date: formatDate(now),
+                    time: formatTime(now),
+                    authorId: currentUserId
+                };
+                
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando en la nube...';
 
-            try {
-                // Guardamos en Firebase
-                await addDoc(entriesCollection, newEntry);
-                titleInput.value = '';
-                contentInput.value = '';
-                window.scrollTo({ top: document.getElementById('entries-container').offsetTop - 50, behavior: 'smooth' });
-            } catch (error) {
-                console.error("Error guardando:", error);
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fa-solid fa-leaf"></i> Guardar Historia';
-            }
-        });
+                try {
+                    await addDoc(entriesCollection, newEntry);
+                    titleInput.value = '';
+                    contentInput.value = '';
+                    window.scrollTo({ top: document.getElementById('entries-container').offsetTop - 50, behavior: 'smooth' });
+                } catch (error) {
+                    console.error("Error guardando:", error);
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fa-solid fa-leaf"></i> Guardar Historia en la Nube';
+                }
+            });
+        }
 
         window.deleteEntry = async (id) => {
-            if (!currentUserId) return;
+            if (!currentUserId || !isMatias) return;
             try {
-                // Borramos de Firebase
                 await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'diary_entries', id));
             } catch(e) {
                 console.error("Error al borrar:", e);
@@ -372,6 +434,43 @@
             );
         }
 
+        const openModal = () => {
+            loginModal.classList.remove('hidden');
+            loginUsername.value = '';
+            loginPassword.value = '';
+            loginError.classList.add('hidden');
+        };
+
+        const closeModal = () => {
+            loginModal.classList.add('hidden');
+        };
+
+        btnOpenLogin?.addEventListener('click', openModal);
+        btnOpenLogin2?.addEventListener('click', openModal);
+        btnCloseModal?.addEventListener('click', closeModal);
+
+        loginForm?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = loginUsername.value.trim();
+            const password = loginPassword.value.trim();
+
+            if (username === 'matias30' && password === 'matias3030') {
+                isMatias = true;
+                sessionStorage.setItem('matias_authenticated', 'true');
+                loginError.classList.add('hidden');
+                closeModal();
+                updateAuthStateUI();
+            } else {
+                loginError.classList.remove('hidden');
+            }
+        });
+
+        btnLogout?.addEventListener('click', () => {
+            isMatias = false;
+            sessionStorage.removeItem('matias_authenticated');
+            updateAuthStateUI();
+        });
+
         async function initAuth() {
             try {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
@@ -381,14 +480,15 @@
                 }
                 currentUserId = auth.currentUser.uid;
                 
-                // Una vez autenticados, empezamos a escuchar los cambios en la nube
+                // Initialize UI state & start cloud syncing
+                updateAuthStateUI();
                 setupRealtimeListener();
             } catch (error) {
                 console.error("Auth error:", error);
+                cloudText.textContent = "Error de autenticación";
             }
         }
 
-        // Iniciar la magia
         initAuth();
     </script>
 </body>
