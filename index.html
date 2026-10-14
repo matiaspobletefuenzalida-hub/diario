@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Diario del Tío Matías</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Kalam:wght@400;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        handwriting: ['Kalam', 'cursive'],
+                    },
+                    colors: {
+                        autumn: {
+                            bg: '#1f1612', 
+                            paper: '#2e2019', 
+                            lines: '#473227', 
+                            text: '#fef3c7', 
+                            muted: '#d6bfae', 
+                            accent: '#b45309', 
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #1f1612;
+            background-image: radial-gradient(#473227 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .paper-lines {
+            background-image: repeating-linear-gradient(transparent, transparent 31px, #473227 31px, #473227 32px);
+            line-height: 32px;
+            padding: 8px 10px;
+        }
+        .entry-card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+        }
+        .entry-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+        }
+        ::placeholder {
+            color: #d6bfae !important;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body class="text-autumn-text antialiased min-h-screen p-4 md:p-8">
+
+    <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+        
+        <!-- Sidebar / Profile -->
+        <aside class="md:col-span-1">
+            <div class="bg-autumn-paper rounded-2xl shadow-2xl overflow-hidden sticky top-8 border border-autumn-lines">
+                <!-- Header with Autumn colors touch -->
+                <div class="h-24 bg-gradient-to-r from-yellow-800 via-orange-700 to-red-900 opacity-90"></div>
+                
+                <div class="px-6 py-8 flex flex-col items-center text-center -mt-16 relative z-10">
+                    <!-- Avatar / Icon -->
+                    <div class="w-24 h-24 bg-autumn-paper rounded-full p-2 shadow-lg mb-4 flex items-center justify-center border-4 border-autumn-lines">
+                        <i class="fa-solid fa-face-smile-wink text-5xl text-orange-500"></i>
+                    </div>
+                    
+                    <h1 class="text-2xl font-bold font-handwriting text-autumn-text mb-2">El Tío Matías</h1>
+                    
+                    <!-- Badges -->
+                    <div class="flex flex-wrap justify-center gap-2 mb-4">
+                        <span class="px-3 py-1 bg-amber-900/50 text-amber-200 border border-amber-800 rounded-full text-xs font-semibold flex items-center gap-1"><i class="fa-solid fa-music"></i> Músico</span>
+                        <span class="px-3 py-1 bg-red-900/50 text-red-200 border border-red-800 rounded-full text-xs font-semibold flex items-center gap-1"><i class="fa-solid fa-flag"></i> Chileno</span>
+                        <span class="px-3 py-1 bg-stone-800 text-stone-300 border border-stone-600 rounded-full text-xs font-semibold flex items-center gap-1"><i class="fa-solid fa-glasses"></i> Con Lentes</span>
+                        <span class="px-3 py-1 bg-orange-900/50 text-orange-200 border border-orange-800 rounded-full text-xs font-semibold flex items-center gap-1"><i class="fa-solid fa-lightbulb"></i> Genio (Inteligente)</span>
+                    </div>
+
+                    <p class="text-autumn-muted text-sm italic mb-4 font-handwriting text-lg">
+                        "¡Wena wena! Soy el Tío Matías. Con mis lentes veo el mundo distinto y con mi música le pongo ritmo. Paso a dejar registro de mis genialidades y locuras."
+                    </p>
+                    
+                    <div class="w-full h-px bg-autumn-lines my-4"></div>
+                    
+                    <div class="text-sm text-autumn-muted">
+                        <p><i class="fa-regular fa-calendar-days mr-2"></i> Hoy es: <span id="current-date" class="font-semibold text-autumn-text"></span></p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="md:col-span-2 flex flex-col gap-8">
+            
+            <!-- Editor Section -->
+            <section class="bg-autumn-paper rounded-2xl shadow-2xl p-6 md:p-8 border-t-8 border-orange-700 border-x border-b border-autumn-lines">
+                <h2 class="text-2xl font-bold font-handwriting text-autumn-text mb-6 flex items-center gap-3">
+                    <i class="fa-solid fa-pen-nib text-orange-500"></i> Escribir nueva página
+                </h2>
+                
+                <form id="diary-form" class="space-y-4">
+                    <div>
+                        <label for="entry-title" class="sr-only">Título</label>
+                        <input type="text" id="entry-title" required placeholder="Título de hoy (ej. El día que descubrí un nuevo acorde...)" 
+                            class="w-full text-xl font-semibold border-0 border-b-2 border-autumn-lines focus:ring-0 focus:border-orange-500 px-2 py-3 bg-transparent transition-colors text-autumn-text placeholder-autumn-muted">
+                    </div>
+                    
+                    <div class="relative">
+                        <label for="entry-content" class="sr-only">Contenido</label>
+                        <textarea id="entry-content" required rows="6" placeholder="Querido diario... (¡Ponele color, Tío Matías!)" 
+                            class="w-full paper-lines border-0 focus:ring-0 resize-y text-autumn-text text-lg bg-transparent font-handwriting"></textarea>
+                    </div>
+                    
+                    <div class="flex justify-end pt-4">
+                        <button type="submit" 
+                            class="bg-orange-700 hover:bg-orange-600 text-autumn-text font-bold py-3 px-6 rounded-xl shadow-lg transition-colors flex items-center gap-2 transform active:scale-95">
+                            <i class="fa-solid fa-leaf"></i> Guardar Historia
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Entries Section -->
+            <section>
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-autumn-text"><i class="fa-solid fa-book-open text-orange-600 mr-2"></i> Mis Historias</h3>
+                    <span id="entries-count" class="text-sm font-semibold bg-autumn-lines text-autumn-text py-1 px-3 rounded-full">0 entradas</span>
+                </div>
+                
+                <div id="entries-container" class="space-y-6">
+                    <!-- Empty State -->
+                    <div id="empty-state" class="bg-autumn-paper rounded-xl p-8 text-center shadow-md border border-autumn-lines">
+                        <i class="fa-solid fa-guitar text-4xl text-autumn-lines mb-4"></i>
+                        <p class="text-autumn-muted font-handwriting text-xl">El diario está en blanco. ¡Afina esa guitarra y escribe tu primera aventura de otoño!</p>
+                    </div>
+                    
+                    <h1 class="text-2xl font-bold font-handwriting text-gray-900 mb-2">El Tío Matías</h1>
+                    
+                    <!-- Badges -->
+                    <div class="flex flex-wrap justify-center gap-2 mb-4">
+                        <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-semibold flex items-center gap-1"><i class="fa-solid fa-music"></i> Músico</span>
+                        <span class="px-3 py-1 bg-red-100 text-red-800 rounded-full text-xs font-semibold flex items-center gap-1"><i class="fa-solid fa-flag"></i> Chileno</span>
+                        <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-semibold flex items-center gap-1"><i class="fa-solid fa-glasses"></i> Con Lentes</span>
+                        <span class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-semibold flex items-center gap-1"><i class="fa-solid fa-lightbulb"></i> Genio (Inteligente)</span>
+                    </div>
+
+                    <p class="text-gray-600 text-sm italic mb-4 font-handwriting text-lg">
+                        "¡Wena wena! Soy el Tío Matías. Con mis lentes veo el mundo distinto y con mi música le pongo ritmo. Paso a dejar registro de mis genialidades y locuras."
+                    </p>
+                    
+                    <div class="w-full h-px bg-gray-200 my-4"></div>
+                    
+                    <div class="text-sm text-gray-500">
+                        <p><i class="fa-regular fa-calendar-days mr-2"></i> Hoy es: <span id="current-date" class="font-semibold"></span></p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="md:col-span-2 flex flex-col gap-8">
+            
+            <!-- Editor Section -->
+            <section class="bg-diary-paper rounded-2xl shadow-xl p-6 md:p-8 border-t-8 border-chile-red">
+                <h2 class="text-2xl font-bold font-handwriting text-gray-800 mb-6 flex items-center gap-3">
+                    <i class="fa-solid fa-pen-nib text-chile-blue"></i> Escribir nueva página
+                </h2>
+                
+                <form id="diary-form" class="space-y-4">
+                    <div>
+                        <label for="entry-title" class="sr-only">Título</label>
+                        <input type="text" id="entry-title" required placeholder="Título de hoy (ej. El día que descubrí un nuevo acorde...)" 
+                            class="w-full text-xl font-semibold border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-chile-blue px-2 py-3 bg-transparent transition-colors placeholder-gray-400">
+                    </div>
+                    
+                    <div class="relative">
+                        <label for="entry-content" class="sr-only">Contenido</label>
+                        <textarea id="entry-content" required rows="6" placeholder="Querido diario... (¡Ponele color, Tío Matías!)" 
+                            class="w-full paper-lines border-0 focus:ring-0 resize-y text-gray-700 text-lg bg-transparent font-handwriting"></textarea>
+                    </div>
+                    
+                    <div class="flex justify-end pt-4">
+                        <button type="submit" 
+                            class="bg-chile-blue hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2 transform active:scale-95">
+                            <i class="fa-solid fa-floppy-disk"></i> Guardar Historia
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Entries Section -->
+            <section>
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-700"><i class="fa-solid fa-book-open text-gray-500 mr-2"></i> Mis Historias</h3>
+                    <span id="entries-count" class="text-sm font-semibold bg-gray-200 text-gray-700 py-1 px-3 rounded-full">0 entradas</span>
+                </div>
+                
+                <div id="entries-container" class="space-y-6">
+                    <!-- Empty State -->
+                    <div id="empty-state" class="bg-white rounded-xl p-8 text-center shadow-sm border border-gray-100">
+                        <i class="fa-solid fa-guitar text-4xl text-gray-300 mb-4"></i>
+                        <p class="text-gray-500 font-handwriting text-xl">El diario está en blanco. ¡Afina esa guitarra y escribe tu primera aventura!</p>
+                    </div>
+                    <!-- Entries will be dynamically inserted here -->
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        
+        // Guardamos las historias en la zona pública para que todo el curso las vea
+        const entriesCollection = collection(db, 'artifacts', appId, 'public', 'data', 'diary_entries');
+
+        let currentUserId = null;
+        let entries = [];
+        let unsubscribe = null;
+
+        const form = document.getElementById('diary-form');
+        const titleInput = document.getElementById('entry-title');
+        const contentInput = document.getElementById('entry-content');
+        const entriesContainer = document.getElementById('entries-container');
+        const emptyState = document.getElementById('empty-state');
+        const entriesCount = document.getElementById('entries-count');
+        const currentDateDisplay = document.getElementById('current-date');
+        const submitBtn = form.querySelector('button[type="submit"]');
+
+        const updateSidebarDate = () => {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            currentDateDisplay.textContent = new Date().toLocaleDateString('es-CL', options);
+        };
+        updateSidebarDate();
+
+        const formatDate = (date) => {
+            return date.toLocaleDateString('es-CL', {
+                day: '2-digit', month: 'long', year: 'numeric'
+            });
+        };
+
+        const formatTime = (date) => {
+            return date.toLocaleTimeString('es-CL', {
+                hour: '2-digit', minute: '2-digit'
+            });
+        };
+
+        const renderEntries = () => {
+            entriesCount.textContent = `${entries.length} ${entries.length === 1 ? 'entrada' : 'entradas'}`;
+
+            if (entries.length === 0) {
+                emptyState.style.display = 'block';
+                document.querySelectorAll('.entry-card').forEach(el => el.remove());
+                return;
+            } else {
+                emptyState.style.display = 'none';
+            }
+
+            document.querySelectorAll('.entry-card').forEach(el => el.remove());
+
+            // Ordenamos desde la más nueva a la más antigua
+            const sortedEntries = [...entries].sort((a, b) => b.timestamp - a.timestamp);
+
+            sortedEntries.forEach(entry => {
+                // El botón de borrar solo se mostrará si fuiste tú quien la escribió
+                const canDelete = entry.authorId === currentUserId;
+                const deleteHTML = canDelete ? `
+                    <footer class="mt-4 pt-4 border-t border-autumn-lines flex justify-end">
+                        <button onclick="deleteEntry('${entry.id}')" class="text-red-400 hover:text-red-300 text-sm font-semibold transition-colors flex items-center gap-1">
+                            <i class="fa-solid fa-trash-can"></i> Borrar
+                        </button>
+                    </footer>
+                ` : '';
+
+                const entryHTML = `
+                    <article class="entry-card bg-autumn-paper rounded-2xl shadow-md p-6 border-l-4 border-orange-600 border-y border-r border-autumn-lines">
+                        <header class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2">
+                            <h4 class="text-xl font-bold text-autumn-text">${escapeHTML(entry.title)}</h4>
+                            <div class="text-sm text-autumn-muted flex items-center gap-2 whitespace-nowrap bg-autumn-bg px-3 py-1 rounded-lg border border-autumn-lines">
+                                <i class="fa-regular fa-clock"></i>
+                                <span>${entry.date} a las ${entry.time}</span>
+                            </div>
+                        </header>
+                        <div class="prose max-w-none">
+                            <p class="text-autumn-muted whitespace-pre-wrap font-handwriting text-lg">${escapeHTML(entry.content)}</p>
+                        </div>
+                        ${deleteHTML}
+                    </article>
+                `;
+                entriesContainer.insertAdjacentHTML('beforeend', entryHTML);
+            });
+        };
+
+        function setupRealtimeListener() {
+            if (unsubscribe) unsubscribe();
+            
+            // onSnapshot se mantiene sincronizado en tiempo real con la nube
+            unsubscribe = onSnapshot(entriesCollection, (snapshot) => {
+                entries = [];
+                snapshot.forEach((doc) => {
+                    entries.push({ id: doc.id, ...doc.data() });
+                });
+                renderEntries();
+            }, (error) => {
+                console.error("Error cargando historias desde la nube:", error);
+            });
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!currentUserId) return;
+
+            const title = titleInput.value.trim();
+            const content = contentInput.value.trim();
+            if (!title || !content) return;
+
+            const now = new Date();
+            const newEntry = {
+                timestamp: now.getTime(),
+                title: title,
+                content: content,
+                date: formatDate(now),
+                time: formatTime(now),
+                authorId: currentUserId
+            };
+            
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando en la nube...';
+
+            try {
+                // Guardamos en Firebase
+                await addDoc(entriesCollection, newEntry);
+                titleInput.value = '';
+                contentInput.value = '';
+                window.scrollTo({ top: document.getElementById('entries-container').offsetTop - 50, behavior: 'smooth' });
+            } catch (error) {
+                console.error("Error guardando:", error);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fa-solid fa-leaf"></i> Guardar Historia';
+            }
+        });
+
+        window.deleteEntry = async (id) => {
+            if (!currentUserId) return;
+            try {
+                // Borramos de Firebase
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'diary_entries', id));
+            } catch(e) {
+                console.error("Error al borrar:", e);
+            }
+        };
+
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, 
+                tag => ({
+                    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+                }[tag])
+            );
+        }
+
+        async function initAuth() {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                currentUserId = auth.currentUser.uid;
+                
+                // Una vez autenticados, empezamos a escuchar los cambios en la nube
+                setupRealtimeListener();
+            } catch (error) {
+                console.error("Auth error:", error);
+            }
+        }
+
+        // Iniciar la magia
+        initAuth();
+    </script>
+</body>
+</html>
